@@ -94,6 +94,32 @@ public class JdbcDao {
         return result;
     }
     
+    public void print(String sql, int length, Object... params) {
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            if(params != null && params.length > 0){
+            	for(int i=0;i<params.length;i++){
+            		stmt.setObject(i+1, params[i]);
+            	}
+            }
+            ResultSet rs = stmt.executeQuery();
+            ResultSetMetaData md = rs.getMetaData();
+            for(int i=0;i<md.getColumnCount();i++){
+                String name = md.getColumnName(i+1).toLowerCase();
+                System.out.print(String.format("%-"+length+"s", name));
+            }
+            System.out.println();
+            while(rs.next()){
+                for(int i=0;i<md.getColumnCount();i++){
+                    System.out.print(String.format("%-"+length+"s", rs.getObject(i+1)));
+                }
+                System.out.println();
+            }
+        } catch (SQLException e) {
+        	throw new RuntimeException("query failed.",e);
+        }
+    }
+    
     public int count(String sql, Object... params) {
         try {
         	PreparedStatement stmt = conn.prepareStatement(sql);

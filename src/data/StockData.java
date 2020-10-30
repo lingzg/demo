@@ -33,6 +33,7 @@ public class StockData {
 //		hd.collectData();
 		hd.batchCollect();
 //		hd.deleteRepeat();
+		hd.print();
 		hd.close();
 	}
 	
@@ -184,5 +185,10 @@ public class StockData {
 	public void deleteRepeat(){
 		String sql = "delete from t_shares_data where id not in (select id from (SELECT min(id) id from t_shares_data GROUP BY s_code,s_date,s_time) t)";
 		dao.execute(sql);
+	}
+	
+	public void print(){
+		String sql = "select s_name,s_code,jrkp,zrsp,dqjg,zd,zdf,jrzg,jrzd,jrbd,jrbf,jrsp from t_shares_data where s_code in ('601222','002075','600522','002600','600312') order by s_date desc,s_time desc limit 5";
+		dao.print(sql, 8);
 	}
 }
