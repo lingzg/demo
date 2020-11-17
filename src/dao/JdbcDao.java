@@ -104,14 +104,17 @@ public class JdbcDao {
             }
             ResultSet rs = stmt.executeQuery();
             ResultSetMetaData md = rs.getMetaData();
+//            String position5 = String.format("%5s", a);   //表示 a 右对齐占用5个字符，不足的用空格补位
+//            String position5 = String.format("%-5s", a);   //表示 a 左对齐占用5个字符，不足的用空格补位
+            String fmt = new StringBuilder("%-").append(length).append("s").toString();
             for(int i=0;i<md.getColumnCount();i++){
                 String name = md.getColumnName(i+1).toLowerCase();
-                System.out.print(String.format("%-"+length+"s", name));
+                System.out.print(String.format(fmt, name));
             }
             System.out.println();
             while(rs.next()){
                 for(int i=0;i<md.getColumnCount();i++){
-                    System.out.print(String.format("%-"+length+"s", rs.getObject(i+1)));
+                    System.out.print(String.format(fmt, rs.getObject(i+1)));
                 }
                 System.out.println();
             }

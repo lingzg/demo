@@ -1,15 +1,17 @@
 package data;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.alibaba.fastjson.JSONArray;
 
@@ -28,63 +30,80 @@ public class StockData {
 	}
 	
 	public static void main(String[] args) {
+		action();
+//		collectTimer();
+//		lookTimer();
+	}
+	
+	public static void action(){
 		StockData hd = new StockData();
 //		hd.insertStock();
-//		hd.collectData();
+//		hd.look();
 		hd.batchCollect();
 //		hd.deleteRepeat();
-		hd.print();
+//		hd.print();
+//		hd.batchCheck();
 		hd.close();
 	}
 	
-	public void collectData(){
-		String url="http://hq.sinajs.cn/list=sh601222,sh600522,sz002080,sz002600,sh600312,sz002027,sz002106,sz002617,sz002661,sh600089,sz002075,sh600068";
-		String result = sendGet(url);
-		String[] results = result.replaceFirst(";$", "").split(";");
-		for(String str : results){
-			str = str.replace("var hq_str_", "").replace("=", ",").replace("\"", "");
-			String[] arr = str.split(",");
-//			save(dao, arr);
-			System.out.println(Arrays.toString(arr));
-		}
+	public static void collectTimer(){
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask(){
+			@Override
+			public void run() {
+				StockData hd = new StockData();
+				hd.batchCollect();
+				hd.close();
+			}
+		}, 1000, 1000*60*10);
 	}
 	
-	public String sendGet(String url) {
-		StringBuilder result = new StringBuilder();
-		BufferedReader in = null;
-		try {
-			String urlNameString = url;
-			URL realUrl = new URL(urlNameString);
-			// 打开和URL之间的连接
-			URLConnection connection = realUrl.openConnection();
-			// 设置通用的请求属性
-			connection.setRequestProperty("accept", "*/*");
-			connection.setRequestProperty("connection", "Keep-Alive");
-			connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-			// 建立实际的连接
-			connection.connect();
-			// 定义 BufferedReader输入流来读取URL的响应
-			in = new BufferedReader(new InputStreamReader(
-					connection.getInputStream(),"gbk"));
-			String line;
-			while ((line = in.readLine()) != null) {
-				result.append(line);
+	public static void lookTimer(){
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask(){
+			@Override
+			public void run() {
+				StockData hd = new StockData();
+				hd.look();
+				hd.close();
 			}
-		} catch (Exception e) {
-			System.out.println("发送GET请求出现异常！" + e);
-			e.printStackTrace();
-		}
-		// 使用finally块来关闭输入流
-		finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (Exception e2) {
-				e2.printStackTrace();
+		}, 1000, 1000*30);
+	}
+	
+	public void look(){
+		String sql = "select group_concat(concat(prefix,s_code)) s_code from t_shares where status = 2";
+		List<String> stocks = dao.find(sql, String.class);
+		if(stocks.size()>0){
+			String list = stocks.get(0);
+			String url="http://hq.sinajs.cn/list="+list;
+			String result = HttpUtil.sendGet(url);
+			String[] results = result.replaceFirst(";$", "").split(";");
+			System.out.print(String.format("%-10s", "s_name"));
+			System.out.print(String.format("%-10s", "jrkp"));
+			System.out.print(String.format("%-10s", "zrsp"));
+			System.out.print(String.format("%-10s", "dqjg"));
+			System.out.print(String.format("%-10s", "zd"));
+			System.out.print(String.format("%-10s", "zdf"));
+			System.out.print(String.format("%-10s", "jrzg"));
+			System.out.print(String.format("%-10s", "jrzd"));
+			System.out.println();
+			for(String str : results){
+				str = str.replace("var hq_str_", "").replace("=", ",").replace("\"", "");
+				String[] arr = str.split(",");
+				Double zrsp = Double.parseDouble(arr[3]);
+				Double zd = Double.parseDouble(arr[4])-zrsp;
+				System.out.print(String.format("%-10s", arr[1]));
+				System.out.print(String.format("%-10s", arr[2]));
+				System.out.print(String.format("%-10s", arr[3]));
+				System.out.print(String.format("%-10s", arr[4]));
+				System.out.print(String.format("%-10s", new BigDecimal(zd).setScale(2, RoundingMode.HALF_UP)));
+				System.out.print(String.format("%-10s", new BigDecimal(zd/zrsp*100).setScale(2, RoundingMode.HALF_UP)+"%"));
+				System.out.print(String.format("%-10s", arr[5]));
+				System.out.print(String.format("%-10s", arr[6]));
+				System.out.println();
 			}
+			System.out.println();
 		}
-		return result.toString();
 	}
 	
 	public boolean save(String[] arr){
@@ -137,7 +156,8 @@ public class StockData {
 		if(now.isBefore(LocalTime.of(9, 30))){
 			return;
 		}
-		List<String> stocks = queryStock();
+		String sql = "select concat(prefix,s_code) s_code from t_shares where status in (1,2)";
+		List<String> stocks = dao.find(sql, String.class);
 		System.out.println("-----------stocks size: "+stocks.size());
 		int size=100;
 		int count = stocks.size();
@@ -146,7 +166,7 @@ public class StockData {
 		int sum=0;
 		for(int i=0;i<page;i++){
 			String list = stocks.stream().skip(i*size).limit(size).reduce("", (x,y) -> x+","+y);
-			String result = sendGet(url+list.substring(1));
+			String result = HttpUtil.sendGet(url+list.substring(1));
 			String[] results = result.replaceFirst(";$", "").split(";");
 			sum += saveBatch(results);
 		}
@@ -155,9 +175,27 @@ public class StockData {
 		System.out.println("-----------use time: "+(end-start)/1000+"s");
 	}
 	
-	public List<String> queryStock(){
+	public void batchCheck(){
 		String sql = "select concat(prefix,s_code) s_code from t_shares";
-		return dao.find(sql, String.class);
+		List<String> stocks = dao.find(sql, String.class);
+		int size=100;
+		int count = stocks.size();
+		int page = count%size==0?count/size:count/size+1;
+		String url="http://hq.sinajs.cn/list=";
+		String date = LocalDate.now().minusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE);
+		System.out.println(date);
+		for(int i=0;i<page;i++){
+			String list = stocks.stream().skip(i*size).limit(size).reduce("", (x,y) -> x+","+y);
+			String result = HttpUtil.sendGet(url+list.substring(1));
+			String[] results = result.replaceFirst(";$", "").split(";");
+			for(String str : results){
+				str = str.replace("var hq_str_", "").replace("=", ",").replace("\"", "");
+				String[] arr = str.split(",");
+				if(date.compareTo(arr[31].toString())>0){
+					System.out.println(str);
+				}
+			}
+		}
 	}
 	
 	public int saveBatch(String[] results){
@@ -188,7 +226,8 @@ public class StockData {
 	}
 	
 	public void print(){
-		String sql = "select s_name,s_code,jrkp,zrsp,dqjg,zd,zdf,jrzg,jrzd,jrbd,jrbf,jrsp from t_shares_data where s_code in ('601222','002075','600522','002600','600312') order by s_date desc,s_time desc limit 5";
-		dao.print(sql, 8);
+		String sql = "select s_date,s_time,s_name,s_code,jrkp,zrsp,dqjg,zd,zdf,jrzg,jrzd,jrbd,jrbf,jrsp from t_shares_data"
+				+ " where id in (select max(id) time from t_shares_data t1 join t_shares t2 on t1.s_code=t2.s_code where t2.status = 2 group by t1.s_code)";
+		dao.print(sql, 10);
 	}
 }

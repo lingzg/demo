@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.13-20150929.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar"/>
 	<classpathentry kind="lib" path="lib/fastjson-1.1.36.jar"/>
+	<classpathentry kind="lib" path="lib/jsoup-1.12.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

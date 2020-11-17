@@ -1,5 +1,6 @@
 package test;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -14,9 +15,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import com.alibaba.fastjson.JSONArray;
+
+import data.HttpUtil;
 
 public class TestCase {
 
@@ -182,11 +188,32 @@ public class TestCase {
     	System.out.println(date);
     }
     
-    @Test
+//    @Test
     public void test15(){
     	String list = Stream.of("1","2","3","4","5","6","7","8","9").skip(8).limit(3).reduce("", (x,y) -> x+","+y);
     	System.out.println(list);
     	String lastMonth = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM"));
     	System.out.println(lastMonth);
+    }
+    
+//    @Test
+    public void test16() throws UnsupportedEncodingException{
+    	String str = "电气监测设备导入模板.xlsx";
+    	String s = new String(str.getBytes("utf-8"), "gbk");
+    	System.out.println(s);
+    }
+    
+    @Test
+    public void test17() throws UnsupportedEncodingException{
+    	String url = "https://www.biduo.cc/biquge/54_54909/c23068222.html";
+    	String res = HttpUtil.sendGet(url);
+    	System.out.println(res);
+    	Document doc = Jsoup.parse(res);
+    	Elements title = doc.select("div.bookname").select("h1");
+    	System.out.println(title);
+        Elements elements = doc.select("div#content");
+        String content = elements.text();
+        content = content.replace("。", "。\r\n");
+        System.out.println(content);
     }
 }
