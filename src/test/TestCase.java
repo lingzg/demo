@@ -207,13 +207,13 @@ public class TestCase {
     public void test17() throws UnsupportedEncodingException{
     	String url = "https://www.biduo.cc/biquge/54_54909/c23068222.html";
     	String res = HttpUtil.sendGet(url);
-    	System.out.println(res);
+//    	System.out.println(res);
     	Document doc = Jsoup.parse(res);
     	Elements title = doc.select("div.bookname").select("h1");
     	System.out.println(title);
         Elements elements = doc.select("div#content");
-        String content = elements.text();
-        content = content.replace("。", "。\r\n");
+        String content = elements.html();
+        content = content.replace("&nbsp;", "").replace("<br>", "");
         System.out.println(content);
     }
 }

@@ -32,7 +32,7 @@ public class StockData {
 	public static void main(String[] args) {
 		action();
 //		collectTimer();
-//		lookTimer();
+		lookTimer();
 	}
 	
 	public static void action(){

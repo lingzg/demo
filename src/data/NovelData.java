@@ -25,8 +25,8 @@ public class NovelData {
 		String res = HttpUtil.sendGet(url);
     	Document doc = Jsoup.parse(res);
     	String title = doc.select("div.bookname").select("h1").text();
-        String content = doc.select("div#content").text();
-        content = title+"\r\n"+content.replace("。", "。\r\n");
+        String content = doc.select("div#content").html();
+        content = content.replace("&nbsp;", "").replace("<br>", "");
         String[] result = {title, content};
         return result;
 	}
