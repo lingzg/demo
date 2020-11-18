@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 
@@ -205,6 +206,21 @@ public class TestCase {
     
     @Test
     public void test17() throws UnsupportedEncodingException{
+    	String url = "https://www.biduo.cc/biquge/54_54909/";
+    	String res = HttpUtil.sendGet(url);
+//    	System.out.println(res);
+    	Document doc = Jsoup.parse(res);
+    	String bookName = doc.select("div#info").select("h1").text();
+    	System.out.println(bookName);
+    	Elements menus = doc.select("div#list").select("dd").select("a");
+//    	System.out.println(menus);
+    	for(Element el : menus){
+    		System.out.println(el.attr("href")+"---"+el.text());
+    	}
+    }
+    
+//    @Test
+    public void test18() throws UnsupportedEncodingException{
     	String url = "https://www.biduo.cc/biquge/54_54909/c23068222.html";
     	String res = HttpUtil.sendGet(url);
 //    	System.out.println(res);
