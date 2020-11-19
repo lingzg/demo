@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.stream.Collectors;
 
 import dao.JdbcDao;
 
@@ -22,8 +21,9 @@ public abstract class NovelData {
 		String sql = "insert into t_novel(book_name,book_url,title,href,content,sort) values(?,?,?,?,?,?)";
 		JdbcDao dao = new JdbcDao();
 		List<String> hrefs = dao.find("select href from t_novel where book_url=?", String.class, bookUrl);
-		catalogs = catalogs.stream().filter(x -> !hrefs.contains(x.getUrl())).collect(Collectors.toList());
-		for(Catalog catalog : catalogs){
+		Iterator<Catalog> it = catalogs.stream().filter(x -> !hrefs.contains(x.getUrl())).iterator();
+		while(it.hasNext()){
+			Catalog catalog = it.next();
 			String url = catalog.getUrl();
 			String content = searchContent(url);
 			dao.execute(sql, bookName,bookUrl,catalog.getTitle(),url,content,catalog.getIndex());
