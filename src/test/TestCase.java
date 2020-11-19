@@ -254,6 +254,6 @@ public class TestCase {
     @Test
     public void test20() {
         NovelData nd = new MeegoqNovel();
-		nd.look(724);
+		nd.look(725);
     }
 }

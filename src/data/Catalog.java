@@ -40,7 +40,7 @@ public class Catalog {
 
 	@Override
 	public String toString() {
-		return "Menu [title=" + title + ", url=" + url + "]";
+		return "Catalog [title=" + title + ", url=" + url + ", index=" + index + "]";
 	}
-	
+
 }
