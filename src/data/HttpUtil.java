@@ -8,6 +8,9 @@ import java.net.URLConnection;
 public class HttpUtil {
 
 	public static String sendGet(String url) {
+		return sendGet(url, "gbk");
+	}
+	public static String sendGet(String url, String charset) {
 		StringBuilder result = new StringBuilder();
 		BufferedReader in = null;
 		try {
@@ -21,7 +24,7 @@ public class HttpUtil {
 			// 建立实际的连接
 			connection.connect();
 			// 定义 BufferedReader输入流来读取URL的响应
-			in = new BufferedReader(new InputStreamReader(connection.getInputStream(),"gbk"));
+			in = new BufferedReader(new InputStreamReader(connection.getInputStream(),charset));
 			String line;
 			while ((line = in.readLine()) != null) {
 				result.append(line);

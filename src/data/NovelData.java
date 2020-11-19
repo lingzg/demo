@@ -1,52 +1,58 @@
 package data;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 import dao.JdbcDao;
 
-public class NovelData {
+public abstract class NovelData {
 
-	private String bookName;
+	protected String bookName;
 	
-	public Elements searchMenu(String url){
-		String res = HttpUtil.sendGet(url);
-    	Document doc = Jsoup.parse(res);
-    	bookName = doc.select("div#info").select("h1").text();
-        Elements catalogs = doc.select("div#list").select("dd").select("a");
-        return catalogs;
-	}
+	public abstract List<Catalog> searchCatalog(String url);
 	
-	public String searchContent(String url){
-		String res = HttpUtil.sendGet(url);
-    	Document doc = Jsoup.parse(res);
-        String content = doc.select("div#content").html();
-        content = content.replace("&nbsp;", "").replace("<br>", "").replace("\n\n", "\n");
-        return content;
-	}
+	public abstract String searchContent(String url);
 	
 	public void saveData(String bookUrl){
-		Elements catalogs = searchMenu(bookUrl);
+		List<Catalog> catalogs = searchCatalog(bookUrl);
 		String sql = "insert into t_novel(book_name,book_url,title,href,content,sort) values(?,?,?,?,?,?)";
-		int index=0;
 		JdbcDao dao = new JdbcDao();
 		List<String> hrefs = dao.find("select href from t_novel where book_url=?", String.class, bookUrl);
-		for(Element el : catalogs){
-			index++;
-			String url = "https://www.biduo.cc"+el.attr("href");
-			if(hrefs.contains(url)){
-				continue;
-			}
-			String title = el.text();
+		catalogs = catalogs.stream().filter(x -> !hrefs.contains(x.getUrl())).collect(Collectors.toList());
+		for(Catalog catalog : catalogs){
+			String url = catalog.getUrl();
 			String content = searchContent(url);
-			dao.execute(sql, bookName,bookUrl,title,url,content,index);
+			dao.execute(sql, bookName,bookUrl,catalog.getTitle(),url,content,catalog.getIndex());
 		}
 		dao.close();
+	}
+	
+	public void saveTimer(String bookUrl){
+		List<Catalog> catalogs = searchCatalog(bookUrl);
+		String sql = "insert into t_novel(book_name,book_url,title,href,content,sort) values(?,?,?,?,?,?)";
+		JdbcDao dao = new JdbcDao();
+		List<String> hrefs = dao.find("select href from t_novel where book_url=?", String.class, bookUrl);
+		Iterator<Catalog> it = catalogs.stream().filter(x -> !hrefs.contains(x.getUrl())).iterator();
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask(){
+			@Override
+			public void run() {
+				if(it.hasNext()){
+					Catalog catalog = it.next();
+					String url = catalog.getUrl();
+					String content = searchContent(url);
+					dao.execute(sql, bookName,bookUrl,catalog.getTitle(),url,content,catalog.getIndex());
+					System.out.println("save "+catalog.getTitle());
+				}else{
+					dao.close();
+					timer.cancel();
+				}
+			}
+		}, 1000, 1000*3);
 	}
 	
 	public void look(long id){
@@ -59,8 +65,10 @@ public class NovelData {
 	}
 	
 	public static void main(String[] args) {
-		NovelData nd = new NovelData();
+//		NovelData nd = new BiduoNovel();
 //		nd.saveData("https://www.biduo.cc/biquge/54_54909/");
-		nd.look(453);
+		NovelData nd = new MeegoqNovel();
+		nd.saveTimer("https://www.meegoq.com/book133890.html");
+//		nd.look(766);
 	}
 }

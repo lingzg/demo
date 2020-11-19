@@ -24,6 +24,8 @@ import org.junit.Test;
 import com.alibaba.fastjson.JSONArray;
 
 import data.HttpUtil;
+import data.MeegoqNovel;
+import data.NovelData;
 
 public class TestCase {
 
@@ -204,8 +206,8 @@ public class TestCase {
     	System.out.println(s);
     }
     
-    @Test
-    public void test17() throws UnsupportedEncodingException{
+//    @Test
+    public void test17(){
     	String url = "https://www.biduo.cc/biquge/54_54909/";
     	String res = HttpUtil.sendGet(url);
 //    	System.out.println(res);
@@ -213,14 +215,11 @@ public class TestCase {
     	String bookName = doc.select("div#info").select("h1").text();
     	System.out.println(bookName);
     	Elements menus = doc.select("div#list").select("dd").select("a");
-//    	System.out.println(menus);
-    	for(Element el : menus){
-    		System.out.println(el.attr("href")+"---"+el.text());
-    	}
+    	System.out.println(menus);
     }
     
 //    @Test
-    public void test18() throws UnsupportedEncodingException{
+    public void test18(){
     	String url = "https://www.biduo.cc/biquge/54_54909/c23068222.html";
     	String res = HttpUtil.sendGet(url);
 //    	System.out.println(res);
@@ -231,5 +230,30 @@ public class TestCase {
         String content = elements.html();
         content = content.replace("&nbsp;", "").replace("<br>", "");
         System.out.println(content);
+    }
+    
+//    @Test
+    public void test19() {
+//    	String url = "https://www.meegoq.com/book133890.html";
+//    	String res = HttpUtil.sendGet(url, "utf-8");
+////    	System.out.println(res);
+//    	Document doc = Jsoup.parse(res);
+//    	String bookName = doc.select("header.line h1").text().replace("最新章节", "");
+//    	System.out.println(bookName);
+//    	Elements menus = doc.select("ul.mulu li:gt(11) a");
+//    	System.out.println(menus);
+    	String url="https://www.meegoq.com/book/133890_179849628.html";
+    	String res = HttpUtil.sendGet(url, "utf-8");
+    	System.out.println(res);
+    	Document doc = Jsoup.parse(res);
+    	String content = doc.select("div#content").text();
+        content = content.replace(" 　　", "\n");
+        System.out.println(content);
+    }
+    
+    @Test
+    public void test20() {
+        NovelData nd = new MeegoqNovel();
+		nd.look(724);
     }
 }
