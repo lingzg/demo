@@ -225,7 +225,7 @@ public class TestCase {
     	String res = HttpUtil.sendGet(url);
 //    	System.out.println(res);
     	Document doc = Jsoup.parse(res);
-    	Elements title = doc.select("div.bookname").select("h1");
+    	Elements title = doc.select("div.bookname h1");
     	System.out.println(title);
         Elements elements = doc.select("div#content");
         String content = elements.html();

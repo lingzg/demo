@@ -49,15 +49,20 @@ public class JdbcDao {
         }
     }
     
+    public PreparedStatement openStatement(String sql, Object... params) throws SQLException{
+    	PreparedStatement stmt = conn.prepareStatement(sql);
+        if(params != null && params.length > 0){
+        	for(int i=0;i<params.length;i++){
+        		stmt.setObject(i+1, params[i]);
+        	}
+        }
+        return stmt;
+    }
+    
     public List<Map<String, Object>> query(String sql, Object... params) {
         List<Map<String,Object>> result = new ArrayList<Map<String,Object>>();
         try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            if(params != null && params.length > 0){
-            	for(int i=0;i<params.length;i++){
-            		stmt.setObject(i+1, params[i]);
-            	}
-            }
+        	PreparedStatement stmt = openStatement(sql, params);
             ResultSet rs = stmt.executeQuery();
             ResultSetMetaData md = rs.getMetaData();
             while(rs.next()){
@@ -78,12 +83,7 @@ public class JdbcDao {
 	public <T> List<T> find(String sql, Class<T> cls, Object... params) {
         List<T> result = new ArrayList<T>();
         try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            if(params != null && params.length > 0){
-            	for(int i=0;i<params.length;i++){
-            		stmt.setObject(i+1, params[i]);
-            	}
-            }
+        	PreparedStatement stmt = openStatement(sql, params);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
                 result.add((T) rs.getObject(1));
@@ -94,14 +94,29 @@ public class JdbcDao {
         return result;
     }
     
+    public List<Object[]> find(String sql, Object... params) {
+        List<Object[]> result = new ArrayList<Object[]>();
+        try {
+        	PreparedStatement stmt = openStatement(sql, params);
+            ResultSet rs = stmt.executeQuery();
+            ResultSetMetaData md = rs.getMetaData();
+            int len = md.getColumnCount();
+            while(rs.next()){
+            	Object[] array = new Object[len];
+            	for(int i=0;i<len;i++){
+            		array[i] = rs.getObject(i+1);
+            	}
+            	result.add(array);
+            }
+        } catch (SQLException e) {
+        	throw new RuntimeException("query failed.",e);
+        }
+        return result;
+    }
+    
     public void print(String sql, int length, Object... params) {
         try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            if(params != null && params.length > 0){
-            	for(int i=0;i<params.length;i++){
-            		stmt.setObject(i+1, params[i]);
-            	}
-            }
+        	PreparedStatement stmt = openStatement(sql, params);
             ResultSet rs = stmt.executeQuery();
             ResultSetMetaData md = rs.getMetaData();
 //            String position5 = String.format("%5s", a);   //表示 a 右对齐占用5个字符，不足的用空格补位
@@ -125,12 +140,7 @@ public class JdbcDao {
     
     public int count(String sql, Object... params) {
         try {
-        	PreparedStatement stmt = conn.prepareStatement(sql);
-            if(params != null && params.length > 0){
-            	for(int i=0;i<params.length;i++){
-            		stmt.setObject(i+1, params[i]);
-            	}
-            }
+        	PreparedStatement stmt = openStatement(sql, params);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
             	return rs.getInt(1);
@@ -143,12 +153,7 @@ public class JdbcDao {
     
     public int execute(String sql, Object... params) {
         try {
-        	PreparedStatement stmt = conn.prepareStatement(sql);
-            if(params != null && params.length > 0){
-            	for(int i=0;i<params.length;i++){
-            		stmt.setObject(i+1, params[i]);
-            	}
-            }
+        	PreparedStatement stmt = openStatement(sql, params);
             int i = stmt.executeUpdate();
             return i;
         } catch (SQLException e) {
