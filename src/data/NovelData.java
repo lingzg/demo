@@ -61,6 +61,6 @@ public class NovelData {
 	public static void main(String[] args) {
 		NovelData nd = new NovelData();
 //		nd.saveData("https://www.biduo.cc/biquge/54_54909/");
-		nd.look(447);
+		nd.look(453);
 	}
 }

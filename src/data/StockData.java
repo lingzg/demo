@@ -30,9 +30,9 @@ public class StockData {
 	}
 	
 	public static void main(String[] args) {
-		action();
+//		action();
 //		collectTimer();
-//		lookTimer();
+		lookTimer();
 	}
 	
 	public static void action(){
