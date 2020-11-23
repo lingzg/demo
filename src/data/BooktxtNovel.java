@@ -31,7 +31,7 @@ public class BooktxtNovel extends NovelData {
         Elements elements = doc.select("div#content");
         String content = elements.html();
         content = content.replace("&nbsp;", "").replace("<br>", "");
-        content = content.substring(0,content.lastIndexOf("<script>chaptererror();</script>")-"<script>chaptererror();</script>".length());
+        content = content.substring(0,content.lastIndexOf("<script>chaptererror();</script>"));
         return content;
     }
 }

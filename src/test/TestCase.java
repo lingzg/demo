@@ -238,14 +238,14 @@ public class TestCase {
 //      System.out.println(bookName);
 //      Elements menus = doc.select("div#list dl dd:gt(6) a");
 //      System.out.println(menus);
-      String url = "https://www.booktxt.net/0_697/184708.html";
+      String url = "https://www.booktxt.net/0_697/1911874.html";
       String res = HttpUtil.sendGet(url);
 //    System.out.println(res);
       Document doc = Jsoup.parse(res);
       Elements elements = doc.select("div#content");
       String content = elements.html();
       content = content.replace("&nbsp;", "").replace("<br>", "");
-      content = content.substring(4,content.lastIndexOf("\n\n\n\n\n\n\n\n\n\n")-"\n\n\n\n\n\n\n\n\n\n".length());
+      content = content.substring(0,content.lastIndexOf("<script>chaptererror();</script>"));
       System.out.println(content);
     }
     
