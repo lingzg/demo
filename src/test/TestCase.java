@@ -208,28 +208,45 @@ public class TestCase {
     
 //    @Test
     public void test17(){
-    	String url = "https://www.biduo.cc/biquge/54_54909/";
-    	String res = HttpUtil.sendGet(url);
-//    	System.out.println(res);
-    	Document doc = Jsoup.parse(res);
-    	String bookName = doc.select("div#info").select("h1").text();
-    	System.out.println(bookName);
-    	Elements menus = doc.select("div#list").select("dd").select("a");
-    	System.out.println(menus);
-    }
-    
-//    @Test
-    public void test18(){
+//    	String url = "https://www.biduo.cc/biquge/54_54909/";
+//    	String res = HttpUtil.sendGet(url);
+////    	System.out.println(res);
+//    	Document doc = Jsoup.parse(res);
+//    	String bookName = doc.select("div#info").select("h1").text();
+//    	System.out.println(bookName);
+//    	Elements menus = doc.select("div#list").select("dd").select("a");
+//    	System.out.println(menus);
     	String url = "https://www.biduo.cc/biquge/54_54909/c23068222.html";
-    	String res = HttpUtil.sendGet(url);
-//    	System.out.println(res);
-    	Document doc = Jsoup.parse(res);
-    	Elements title = doc.select("div.bookname h1");
-    	System.out.println(title);
+        String res = HttpUtil.sendGet(url);
+//      System.out.println(res);
+        Document doc = Jsoup.parse(res);
+        Elements title = doc.select("div.bookname h1");
+        System.out.println(title);
         Elements elements = doc.select("div#content");
         String content = elements.html();
         content = content.replace("&nbsp;", "").replace("<br>", "");
         System.out.println(content);
+    }
+    
+    @Test
+    public void test18(){
+//      String url = "https://www.booktxt.net/0_697/";
+//      String res = HttpUtil.sendGet(url);
+////      System.out.println(res);
+//      Document doc = Jsoup.parse(res);
+//      String bookName = doc.select("div#info h1").text();
+//      System.out.println(bookName);
+//      Elements menus = doc.select("div#list dl dd:gt(6) a");
+//      System.out.println(menus);
+      String url = "https://www.booktxt.net/0_697/184708.html";
+      String res = HttpUtil.sendGet(url);
+//    System.out.println(res);
+      Document doc = Jsoup.parse(res);
+      Elements elements = doc.select("div#content");
+      String content = elements.html();
+      content = content.replace("&nbsp;", "").replace("<br>", "");
+      content = content.substring(4,content.lastIndexOf("\n\n\n\n\n\n\n\n\n\n")-"\n\n\n\n\n\n\n\n\n\n".length());
+      System.out.println(content);
     }
     
 //    @Test
@@ -251,7 +268,7 @@ public class TestCase {
         System.out.println(content);
     }
     
-    @Test
+//    @Test
     public void test20() {
         NovelData nd = new MeegoqNovel();
 		nd.look(725);
