@@ -66,12 +66,13 @@ public abstract class NovelData {
 	}
 	
 	public static void main(String[] args) {
-//		NovelData nd = new BiduoNovel();
+		NovelData nd = null;
+//		nd = new BiduoNovel();
 //		nd.saveData("https://www.biduo.cc/biquge/54_54909/");
-//		NovelData nd = new MeegoqNovel();
+//		nd = new MeegoqNovel();
 //		nd.saveTimer("https://www.meegoq.com/book133890.html");
-	  NovelData nd = new BooktxtNovel();
-//	  nd.saveData("https://www.booktxt.net/0_697/");
-		nd.look(1660);
+	    nd = new BooktxtNovel();
+//	    nd.saveData("https://www.booktxt.net/0_697/");
+		nd.look(1450);
 	}
 }

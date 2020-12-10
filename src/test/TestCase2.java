@@ -1,13 +1,19 @@
 package test;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.junit.Test;
 
 import com.alibaba.fastjson.JSONArray;
 
+import data.HttpUtil;
 import model.OaProjectPlan;
 
 public class TestCase2 {
@@ -37,7 +43,23 @@ public class TestCase2 {
 		System.out.println(list);
 		System.out.println(new Date(1602000000000L));
 		System.out.println(new Date(1599494400000L));
+		//http://quotes.money.163.com/service/chddata.html?code=0000001&start=19901219&end=20201209&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;VOTURNOVER;VATURNOVER
 	}
 	
+//	@Test
+    public void test4(){
+        String url = "http://quotes.money.163.com/service/chddata.html?code=1002616&start=19901219&end=20201209&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;VOTURNOVER;VATURNOVER";
+        HttpUtil.sendGetFile(url,"d:/doc/stock/00002616.csv");
+    }
 	
+	@Test
+    public void test5() throws IOException{
+//        File file = new File("d:/doc/stock/0000001.csv");
+//        List<String> lines = FileUtils.readLines(file,"gbk");
+//        lines.subList(0, 100).forEach(x->System.out.println(x));
+//        System.out.println(lines);
+	    DecimalFormat df = new DecimalFormat("0");
+	    Double d = new Double("3.39317806321e+11");
+	    System.out.println(df.format(d)); 
+    }
 }

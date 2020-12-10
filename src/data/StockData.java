@@ -31,7 +31,6 @@ public class StockData {
 	
 	public static void main(String[] args) {
 		action();
-//		collectTimer();
 //		lookTimer();
 	}
 	
@@ -43,6 +42,7 @@ public class StockData {
 //		hd.deleteRepeat();
 //		hd.print();
 //		hd.batchCheck();
+//		hd.batchCollectHis();
 		hd.close();
 	}
 	
@@ -230,4 +230,27 @@ public class StockData {
 				+ " where id in (select max(id) time from t_shares_data t1 join t_shares t2 on t1.s_code=t2.s_code where t2.status = 2 group by t1.s_code)";
 		dao.print(sql, 10);
 	}
+	
+	public boolean collectHisData(String code){
+        String url = "http://quotes.money.163.com/service/chddata.html?code="+code+"&start=19901219&end=20201209&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;VOTURNOVER;VATURNOVER";
+        return HttpUtil.sendGetFile(url,"d:/doc/stock/"+code.substring(1)+".csv");
+    }
+	
+	public void batchCollectHis(){
+        long start = System.currentTimeMillis();
+        System.out.println("-----------batchCollectHis at "+LocalDateTime.now());
+        String sql = "select concat(case prefix when 'sz' then 1 when 'sh' then 0 end ,s_code) s_code from t_shares ";
+        List<String> stocks = dao.find(sql, String.class);
+        System.out.println("-----------stocks size: "+stocks.size());
+        List<String> errorStocks = new ArrayList<String>();
+        for(String code : stocks){
+            boolean flag = collectHisData(code);
+            if(!flag){
+                errorStocks.add(code);
+            }
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("-----------use time: "+(end-start)/1000+"s");
+        System.out.println("-----------errorStocks: "+errorStocks);
+    }
 }
