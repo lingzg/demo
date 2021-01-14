@@ -228,7 +228,7 @@ public class TestCase {
         System.out.println(content);
     }
     
-    @Test
+//    @Test
     public void test18(){
 //      String url = "https://www.booktxt.net/0_697/";
 //      String res = HttpUtil.sendGet(url);
@@ -268,9 +268,16 @@ public class TestCase {
         System.out.println(content);
     }
     
-//    @Test
+    @Test
     public void test20() {
         NovelData nd = new MeegoqNovel();
-		nd.look(725);
+		nd.look(4481);
+    }
+    
+//    @Test
+    public void test21() {
+        String url="https://vipreader.qidian.com/chapter/1014196851/629592565";
+        String res = HttpUtil.sendGet(url, "utf-8");
+        System.out.println(res);
     }
 }

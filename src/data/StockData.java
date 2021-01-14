@@ -37,7 +37,7 @@ public class StockData {
 	public static void action(){
 		StockData hd = new StockData();
 //		hd.insertStock();
-//		hd.look();
+		hd.look();
 		hd.batchCollect();
 //		hd.deleteRepeat();
 //		hd.print();
@@ -67,7 +67,7 @@ public class StockData {
 				hd.look();
 				hd.close();
 			}
-		}, 1000, 1000*30);
+		}, 1000, 1000*20);
 	}
 	
 	public void look(){

@@ -69,10 +69,16 @@ public abstract class NovelData {
 		NovelData nd = null;
 //		nd = new BiduoNovel();
 //		nd.saveData("https://www.biduo.cc/biquge/54_54909/");
-//		nd = new MeegoqNovel();
+//		nd.saveData("https://www.biduo.cc/biquge/59_59774/");
+//		nd.saveData("https://www.biduo.cc/biquge/59_59530/");
+//		nd.saveData("https://www.biduo.cc/biquge/56_56415/");
+//		nd.saveData("https://www.biduo.cc/biquge/16_16119/");
+		nd = new MeegoqNovel();
 //		nd.saveTimer("https://www.meegoq.com/book133890.html");
-	    nd = new BooktxtNovel();
+		nd.saveTimer("https://www.meegoq.com/book150790.html");
+//	    nd = new BooktxtNovel();
 //	    nd.saveData("https://www.booktxt.net/0_697/");
-		nd.look(1450);
+//		nd.saveData("https://www.booktxt.net/18_18531/");
+//		nd.look(4280);
 	}
 }
