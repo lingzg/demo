@@ -30,8 +30,8 @@ public class StockData {
 	}
 	
 	public static void main(String[] args) {
-		action();
-//		lookTimer();
+//		action();
+		lookTimer();
 	}
 	
 	public static void action(){
@@ -78,6 +78,7 @@ public class StockData {
 			String url="http://hq.sinajs.cn/list="+list;
 			String result = HttpUtil.sendGet(url);
 			String[] results = result.replaceFirst(";$", "").split(";");
+			System.out.print(String.format("%-10s", "s_code"));
 			System.out.print(String.format("%-10s", "s_name"));
 			System.out.print(String.format("%-10s", "jrkp"));
 			System.out.print(String.format("%-10s", "zrsp"));
@@ -92,6 +93,7 @@ public class StockData {
 				String[] arr = str.split(",");
 				Double zrsp = Double.parseDouble(arr[3]);
 				Double zd = Double.parseDouble(arr[4])-zrsp;
+				System.out.print(String.format("%-10s", arr[0]));
 				System.out.print(String.format("%-10s", arr[1]));
 				System.out.print(String.format("%-10s", arr[2]));
 				System.out.print(String.format("%-10s", arr[3]));

@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -268,16 +270,17 @@ public class TestCase {
         System.out.println(content);
     }
     
-    @Test
+//    @Test
     public void test20() {
         NovelData nd = new MeegoqNovel();
 		nd.look(4481);
     }
     
-//    @Test
+    @Test
     public void test21() {
-        String url="https://vipreader.qidian.com/chapter/1014196851/629592565";
-        String res = HttpUtil.sendGet(url, "utf-8");
+        List list = Collections.emptyList();
+        list = Arrays.asList(1,2,3);
+        String res = StringUtils.join(list, ",");
         System.out.println(res);
     }
 }
