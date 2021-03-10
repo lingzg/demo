@@ -87,6 +87,7 @@ public class StockData {
 			System.out.print(String.format("%-10s", "zdf"));
 			System.out.print(String.format("%-10s", "jrzg"));
 			System.out.print(String.format("%-10s", "jrzd"));
+			System.out.print(String.format("%-10s", "zf"));
 			System.out.println();
 			for(String str : results){
 				str = str.replace("var hq_str_", "").replace("=", ",").replace("\"", "");
@@ -102,6 +103,7 @@ public class StockData {
 				System.out.print(String.format("%-10s", new BigDecimal(zd/zrsp*100).setScale(2, RoundingMode.HALF_UP)+"%"));
 				System.out.print(String.format("%-10s", arr[5]));
 				System.out.print(String.format("%-10s", arr[6]));
+				System.out.print(String.format("%-10s", new BigDecimal(arr[5]).subtract(new BigDecimal(arr[6])).setScale(2, RoundingMode.HALF_UP)));
 				System.out.println();
 			}
 			System.out.println();

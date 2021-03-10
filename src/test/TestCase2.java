@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.junit.Test;
 
@@ -22,12 +23,13 @@ import model.OaProjectPlan;
 
 public class TestCase2 {
 
-//	@Test
+	@Test
 	public void test1(){
 		String s="e10adc3949ba59abbe56e057f20f883e";//123456
 		System.out.println(new Sha256Hash(s).toHex());//cdf4a007e2b02a0c49fc9b7ccfbb8a10c644f635e1765dcf2a7ab794ddc7edac
 		s="21232f297a57a5a743894a0e4a801fc3";//admin
 		System.out.println(new Sha256Hash(s).toHex());//465c194afb65670f38322df087f0a9bb225cc257e43eb4ac5a0c98ef5b3173ac
+		System.out.println(new Md5Hash("123456").toHex());
 	}
 	
 	//@Test
@@ -70,7 +72,7 @@ public class TestCase2 {
 	    System.out.println(new Date().getTime());
     }
 	
-	@Test
+//	@Test
     public void test6(){
         List<Integer> list = Arrays.asList(1,3,4,2,6,10,9,8,3);
         List<Integer> list2 = list.stream().sorted((x,y)->x-y).collect(Collectors.toList());
